@@ -72,6 +72,7 @@ void quickSort(int *a, int l, int r) {
 
 算法稳定性：稳定
 
+自顶向下 递归实现
 ```cpp
 // C++ 实现
 
@@ -100,6 +101,35 @@ void mergeSort(int *a, int l, int r) {
 	merge(a, l, m, r); // 合并有序的左右区间
 }
 
+```
+自底向上 迭代实现
+```cpp
+// C++ 实现
+
+void merge(int *a, int l, int m, int r) {
+	int *tmp = new int[r - l];
+	int i = l, j = m, k = 0;
+	
+	while (i < m && j < r) {
+		if (a[i] <= a[j])
+			tmp[k++] = a[i++];
+		else
+			tmp[k++] = a[j++];
+	}
+	while (i < m) tmp[k++] = a[i++];
+	while (j < r) tmp[k++] = a[j++];
+	
+	for (i = 0; i < k; i++) a[l + i] = tmp[i];
+	delete tmp;
+}
+
+void mergeSort(int *a, int n) {
+	for (int len = 1; len < n; len *= 2) { // 分组长度，每次扩大一倍
+		for (int i = 0; i + len < n; i += len * 2) { // 每个分组中第一个元素的下标，长度为 len 的区间已经有序，通过合并两个长度为 len 的相邻的区间，获取长度为 2 * len 的有序区间
+			merge(a, i, i + len, min(n, i + 2 * len));
+		}
+	}
+}
 ```
 # 5、计数排序
 
@@ -197,6 +227,7 @@ void selectSort(int *a, int n) {
 大顶堆实现升序：先构建大顶堆，然后将最大值与未排序区间的最后一个元素交换位置，调整堆为最大堆，继续交换......
 
 ```cpp
+// C++ 实现
 void maxheapDown(int *a, int l, int r) { // a[l, r)
 	int cur = l, val = a[l]; // l 为待下调的元素下标
 	for (int child = cur * 2 + 1; child < r; cur = child, child = 2 * child + 1) { // cur 有孩子存在
